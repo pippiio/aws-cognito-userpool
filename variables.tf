@@ -1,10 +1,11 @@
 variable "config" {
   description = ""
+
   type = object({
     domain          = string
     certificate_arn = optional(string)
-    enable_signup   = optional(bool)
-    optional_mfa    = optional(bool)
+    enable_signup   = optional(bool, false)
+    optional_mfa    = optional(bool, false)
     schema = optional(map(object({
       attribute_data_type      = string
       required                 = optional(bool)
