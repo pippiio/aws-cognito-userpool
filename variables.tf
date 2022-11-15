@@ -19,7 +19,7 @@ variable "config" {
         max_length = optional(number)
         min_length = optional(number)
       }))
-    })))
+    })), {})
 
     client = map(object({
       callback_urls = set(string)
