@@ -1,5 +1,5 @@
 locals {
-  enable_custom_messages = local.config.custom_messages != null ? {0:"enabled"} : {}
+  enable_custom_messages = toset(local.config.custom_messages != null ?  ["true"] : [])
 
   signup_event = jsonencode({
     emailSubject = try(local.config.custom_messages.signup.subject, null)
@@ -88,7 +88,7 @@ data "aws_iam_policy_document" "lambda_log_policy" {
       "logs:DescribeLogStreams"
     ]
 
-    resources = ["${one(aws_cloudwatch_log_group.lambda).arn}:*"]
+    resources = ["${aws_cloudwatch_log_group.lambda[each.key].arn}:*"]
   }
 }
 
@@ -96,12 +96,12 @@ resource "aws_iam_role" "lambda" {
   for_each = local.enable_custom_messages
 
   name               = "${local.name_prefix}lambda-role"
-  assume_role_policy = one(data.aws_iam_policy_document.lambda_assume_role_policy).json
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy[each.key].json
   path               = "/"
 
   inline_policy {
     name   = "logs"
-    policy = one(data.aws_iam_policy_document.lambda_log_policy).json
+    policy = data.aws_iam_policy_document.lambda_log_policy[each.key].json
   }
 }
 
@@ -110,7 +110,7 @@ resource "aws_lambda_function" "lambda" {
 
   function_name    = "${local.name_prefix}CognitoCustomMessage"
   filename         = "${path.module}/lambda.zip"
-  role             = one(aws_iam_role.lambda).arn
+  role             = aws_iam_role.lambda[each.key].arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
   source_code_hash = data.archive_file.lambda[each.key].output_base64sha256
@@ -126,7 +126,7 @@ resource "aws_lambda_permission" "allow_cognito" {
 
   statement_id  = "AllowExecutionFromCognito"
   action        = "lambda:InvokeFunction"
-  function_name = one(aws_lambda_function.lambda).function_name
+  function_name = aws_lambda_function.lambda[each.key].function_name
   principal     = "cognito-idp.amazonaws.com"
   source_arn    = aws_cognito_user_pool.this.arn
 }

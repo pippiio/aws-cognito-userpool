@@ -121,7 +121,7 @@ resource "aws_cognito_user_pool" "this" {
     for_each = local.enable_custom_messages
 
     content {
-      custom_message = one(aws_lambda_function.lambda).arn
+      custom_message = aws_lambda_function.lambda[lambda_config.key].arn
     }
   }
 
