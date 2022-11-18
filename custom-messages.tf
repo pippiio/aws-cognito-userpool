@@ -1,5 +1,5 @@
 locals {
-  enable_custom_messages = local.config.custom_messages != null ? 1 : 0
+  enable_custom_messages = local.config.custom_messages != null ? {0:"enabled"} : {}
 
   signup_event = jsonencode({
     emailSubject = try(local.config.custom_messages.signup.subject, null)
@@ -39,7 +39,7 @@ locals {
 }
 
 data "archive_file" "lambda" {
-  count = local.enable_custom_messages
+  for_each = local.enable_custom_messages
 
   type        = "zip"
   output_path = "${path.module}/lambda.zip"
@@ -59,14 +59,14 @@ data "archive_file" "lambda" {
 }
 
 resource "aws_cloudwatch_log_group" "lambda" {
-  count = local.enable_custom_messages
+  for_each = local.enable_custom_messages
 
   name              = "/aws/lambda/${local.name_prefix}CognitoCustomMessage"
   retention_in_days = 7
 }
 
 data "aws_iam_policy_document" "lambda_assume_role_policy" {
-  count = local.enable_custom_messages
+  for_each = local.enable_custom_messages
 
   statement {
     actions = ["sts:AssumeRole"]
@@ -78,7 +78,7 @@ data "aws_iam_policy_document" "lambda_assume_role_policy" {
 }
 
 data "aws_iam_policy_document" "lambda_log_policy" {
-  count = local.enable_custom_messages
+  for_each = local.enable_custom_messages
 
   statement {
     actions = [
@@ -93,7 +93,7 @@ data "aws_iam_policy_document" "lambda_log_policy" {
 }
 
 resource "aws_iam_role" "lambda" {
-  count = local.enable_custom_messages
+  for_each = local.enable_custom_messages
 
   name               = "${local.name_prefix}lambda-role"
   assume_role_policy = one(data.aws_iam_policy_document.lambda_assume_role_policy).json
@@ -106,14 +106,14 @@ resource "aws_iam_role" "lambda" {
 }
 
 resource "aws_lambda_function" "lambda" {
-  count = local.enable_custom_messages
+  for_each = local.enable_custom_messages
 
   function_name    = "${local.name_prefix}CognitoCustomMessage"
   filename         = "${path.module}/lambda.zip"
   role             = one(aws_iam_role.lambda).arn
   handler          = "index.handler"
   runtime          = "nodejs16.x"
-  source_code_hash = filebase64sha256("${path.module}/lambda.zip")
+  source_code_hash = data.archive_file.lambda[each.key].output_base64sha256
   publish          = true
 
   depends_on = [
@@ -122,7 +122,7 @@ resource "aws_lambda_function" "lambda" {
 }
 
 resource "aws_lambda_permission" "allow_cognito" {
-  count = local.enable_custom_messages
+  for_each = local.enable_custom_messages
 
   statement_id  = "AllowExecutionFromCognito"
   action        = "lambda:InvokeFunction"
