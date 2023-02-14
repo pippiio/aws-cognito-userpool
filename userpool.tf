@@ -188,3 +188,17 @@ resource "aws_cognito_user_pool_domain" "this" {
   user_pool_id    = aws_cognito_user_pool.this.id
   certificate_arn = local.config.certificate_arn
 }
+
+resource "aws_cognito_identity_provider" "saml" {
+  for_each = local.config.federated_identity_providers.saml
+
+  user_pool_id = aws_cognito_user_pool.this.id
+
+  provider_name = each.key
+  provider_type = "SAML"
+  provider_details = {
+    MetadataURL = startswith(each.value.metadata, "https") ? each.value.metadata : null
+    MetadataFile = startswith(each.value.metadata, "https") ? null : each.value.metadata
+  }
+  attribute_mapping = each.value.attribute_mappings
+}

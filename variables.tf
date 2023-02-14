@@ -21,10 +21,24 @@ variable "config" {
       }))
     })), {})
 
+    federated_identity_providers = optional(map(object({
+      saml = optional(map(object({
+        metadata = string
+        attribute_mappings = optional(map(string))
+      })))
+      // https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_CreateIdentityProvider.html#CognitoUserPools-CreateIdentityProvider-request-AttributeMapping
+      # google = 
+      # facebook =
+      # amazon =
+      # apple = 
+      # open_id =
+    })), {})
+
     client = map(object({
       callback_urls = set(string)
       logout_urls   = set(string)
       auth_flows    = optional(set(string))
+      identity_providers = optional(set(string), ["cognito"])
     }))
 
     custom_messages = optional(object({
