@@ -3,6 +3,6 @@ output "user_pool" {
 }
 
 output "clients" {
-  value = aws_cognito_user_pool_client.this
+  value     = aws_cognito_user_pool_client.this
   sensitive = true
 }
