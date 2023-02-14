@@ -193,12 +193,92 @@ resource "aws_cognito_identity_provider" "saml" {
   for_each = local.config.federated_identity_providers.saml
 
   user_pool_id = aws_cognito_user_pool.this.id
-
+  attribute_mapping = each.value.attribute_mappings
   provider_name = each.key
   provider_type = "SAML"
+  
   provider_details = {
     MetadataURL = startswith(each.value.metadata, "https") ? each.value.metadata : null
     MetadataFile = startswith(each.value.metadata, "https") ? null : each.value.metadata
   }
+}
+
+resource "aws_cognito_identity_provider" "google" {
+  for_each = local.config.federated_identity_providers.google
+
+  user_pool_id = aws_cognito_user_pool.this.id
   attribute_mapping = each.value.attribute_mappings
+  provider_name = each.key
+  provider_type = "Google"
+
+  provider_details = {
+    client_id = each.value.client_id
+    client_secret = each.value.client_secret
+    authorize_scopes = join(" ", each.value.authorize_scopes)
+  }
+}
+
+resource "aws_cognito_identity_provider" "amazon" {
+  for_each = local.config.federated_identity_providers.amazon
+
+  user_pool_id = aws_cognito_user_pool.this.id
+  attribute_mapping = each.value.attribute_mappings
+  provider_name = each.key
+  provider_type = "LoginWithAmazon"
+
+  provider_details = {
+    client_id = each.value.client_id
+    client_secret = each.value.client_secret
+    authorize_scopes = join(" ", each.value.authorize_scopes)
+  }
+}
+
+resource "aws_cognito_identity_provider" "facebook" {
+  for_each = local.config.federated_identity_providers.facebook
+
+  user_pool_id = aws_cognito_user_pool.this.id
+  attribute_mapping = each.value.attribute_mappings
+  provider_name = each.key
+  provider_type = "Facebook"
+
+  provider_details = {
+    client_id = each.value.client_id
+    client_secret = each.value.client_secret
+    authorize_scopes = join(" ", each.value.authorize_scopes)
+    api_version = each.value.api_version
+  }
+}
+
+resource "aws_cognito_identity_provider" "apple" {
+  for_each = local.config.federated_identity_providers.apple
+
+  user_pool_id = aws_cognito_user_pool.this.id
+  attribute_mapping = each.value.attribute_mappings
+  provider_name = each.key
+  provider_type = "SignInWithApple"
+
+  provider_details = {
+    client_id = each.value.client_id
+    team_id = each.value.team_id
+    key_id = each.value.key_id
+    private_key = each.value.private_key
+    authorize_scopes = join(" ", each.value.authorize_scopes)
+  }
+}
+
+resource "aws_cognito_identity_provider" "oidc" {
+  for_each = local.config.federated_identity_providers.oidc
+
+  user_pool_id = aws_cognito_user_pool.this.id
+  attribute_mapping = each.value.attribute_mappings
+  provider_name = each.key
+  provider_type = "OIDC"
+
+   provider_details = {
+    client_id = each.value.client_id
+    client_secret = each.value.client_secret
+    attributes_request_method = each.value.attributes_request_method
+    issuer_url = each.value.issuer_url
+    authorize_scopes = join(" ", each.value.authorize_scopes)
+  }
 }

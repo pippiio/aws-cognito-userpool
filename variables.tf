@@ -26,17 +26,46 @@ variable "config" {
         metadata = string
         attribute_mappings = optional(map(string))
       })))
-      // https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_CreateIdentityProvider.html#CognitoUserPools-CreateIdentityProvider-request-AttributeMapping
-      # google = 
-      # facebook =
-      # amazon =
-      # apple = 
-      # open_id =
+      google = optional(map(object({
+        client_id = string
+        client_secret = string
+        authorize_scopes = set(string)
+        attribute_mappings = optional(map(string))
+      })))
+      facebook = optional(map(object({
+        client_id = string
+        client_secret = string
+        authorize_scopes = set(string)
+        api_version = string
+        attribute_mappings = optional(map(string))
+      })))
+      amazon = optional(map(object({
+        client_id = string
+        client_secret = string
+        authorize_scopes = set(string)
+        attribute_mappings = optional(map(string))
+      })))
+      apple = optional(map(object({
+        client_id = string
+        team_id = string
+        key_id = string
+        private_key = string
+        authorize_scopes = set(string)
+        attribute_mappings = optional(map(string))
+      })))
+      oidc = optional(map(object({
+        client_id = string
+        client_secret = string
+        attributes_request_method = string
+        issuer_url = string
+        authorize_scopes = set(string)
+        attribute_mappings = optional(map(string))
+      })))
     })), {})
 
     client = map(object({
       callback_urls = set(string)
-      logout_urls   = set(string)
+      logout_urls   = optional(set(string))
       auth_flows    = optional(set(string))
       identity_providers = optional(set(string), ["cognito"])
     }))
