@@ -21,7 +21,7 @@ variable "config" {
       }))
     })), {})
 
-    federated_identity_providers = optional(map(object({
+    federated_identity_providers = optional(object({
       saml = optional(map(object({
         metadata           = string
         attribute_mappings = optional(map(string))
@@ -61,7 +61,7 @@ variable "config" {
         authorize_scopes          = set(string)
         attribute_mappings        = optional(map(string))
       })))
-    })), {})
+    }), {})
 
     client = map(object({
       callback_urls      = set(string)
