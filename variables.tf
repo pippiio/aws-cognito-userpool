@@ -21,30 +21,30 @@ variable "config" {
       }))
     })), {})
 
-    federated_identity_providers = optional(map(object({
+    federated_identity_providers = optional(object({
       saml = optional(map(object({
         metadata           = string
         attribute_mappings = optional(map(string))
-      })))
+      })), {})
       google = optional(map(object({
         client_id          = string
         client_secret      = string
         authorize_scopes   = set(string)
         attribute_mappings = optional(map(string))
-      })))
+      })), {})
       facebook = optional(map(object({
         client_id          = string
         client_secret      = string
         authorize_scopes   = set(string)
         api_version        = string
         attribute_mappings = optional(map(string))
-      })))
+      })), {})
       amazon = optional(map(object({
         client_id          = string
         client_secret      = string
         authorize_scopes   = set(string)
         attribute_mappings = optional(map(string))
-      })))
+      })), {})
       apple = optional(map(object({
         client_id          = string
         team_id            = string
@@ -52,7 +52,7 @@ variable "config" {
         private_key        = string
         authorize_scopes   = set(string)
         attribute_mappings = optional(map(string))
-      })))
+      })), {})
       oidc = optional(map(object({
         client_id                 = string
         client_secret             = string
@@ -60,8 +60,8 @@ variable "config" {
         issuer_url                = string
         authorize_scopes          = set(string)
         attribute_mappings        = optional(map(string))
-      })))
-    })), {})
+      })), {})
+    }), {})
 
     client = map(object({
       callback_urls      = set(string)
