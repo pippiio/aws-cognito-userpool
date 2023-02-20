@@ -21,10 +21,53 @@ variable "config" {
       }))
     })), {})
 
+    federated_identity_providers = optional(map(object({
+      saml = optional(map(object({
+        metadata           = string
+        attribute_mappings = optional(map(string))
+      })))
+      google = optional(map(object({
+        client_id          = string
+        client_secret      = string
+        authorize_scopes   = set(string)
+        attribute_mappings = optional(map(string))
+      })))
+      facebook = optional(map(object({
+        client_id          = string
+        client_secret      = string
+        authorize_scopes   = set(string)
+        api_version        = string
+        attribute_mappings = optional(map(string))
+      })))
+      amazon = optional(map(object({
+        client_id          = string
+        client_secret      = string
+        authorize_scopes   = set(string)
+        attribute_mappings = optional(map(string))
+      })))
+      apple = optional(map(object({
+        client_id          = string
+        team_id            = string
+        key_id             = string
+        private_key        = string
+        authorize_scopes   = set(string)
+        attribute_mappings = optional(map(string))
+      })))
+      oidc = optional(map(object({
+        client_id                 = string
+        client_secret             = string
+        attributes_request_method = string
+        issuer_url                = string
+        authorize_scopes          = set(string)
+        attribute_mappings        = optional(map(string))
+      })))
+    })), {})
+
     client = map(object({
-      callback_urls = set(string)
-      logout_urls   = set(string)
-      auth_flows    = optional(set(string))
+      callback_urls      = set(string)
+      logout_urls        = optional(set(string))
+      auth_flows         = optional(set(string))
+      identity_providers = optional(set(string), ["cognito"])
     }))
 
     custom_messages = optional(object({

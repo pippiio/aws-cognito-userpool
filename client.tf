@@ -7,7 +7,7 @@ resource "aws_cognito_user_pool_client" "this" {
   callback_urls = each.value.callback_urls
   logout_urls   = each.value.logout_urls
   # generate_secret              = true
-  supported_identity_providers = ["COGNITO"]
+  supported_identity_providers = each.value.identity_providers
 
   allowed_oauth_flows  = ["code"]            // (code, implicit, client_credentials).
   allowed_oauth_scopes = ["openid", "email"] //- (Optional) List of allowed OAuth scopes (phone, email, openid, profile, and aws.cognito.signin.user.admin).

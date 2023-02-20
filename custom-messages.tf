@@ -1,5 +1,5 @@
 locals {
-  enable_custom_messages = toset(local.config.custom_messages != null ?  ["true"] : [])
+  enable_custom_messages = toset(local.config.custom_messages != null ? ["true"] : [])
 
   signup_event = jsonencode({
     emailSubject = try(local.config.custom_messages.signup.subject, null)
