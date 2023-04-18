@@ -15,6 +15,12 @@ resource "aws_cognito_user_pool_client" "this" {
   # default_redirect_uri - (Optional) The default redirect URI. Must be in the list of callback URLs.
   explicit_auth_flows = each.value.auth_flows
 
+  token_validity_units {
+      access_token  = "minutes" 
+      id_token      = "minutes" 
+      refresh_token = "days" 
+  }
+
   # refresh_token_validity - (Optional) The time limit in days refresh tokens are valid for.
   # read_attributes - (Optional) List of user pool attributes the application client can read from.
   # write_attributes - (Optional) List of user pool attributes the application client can write to.
