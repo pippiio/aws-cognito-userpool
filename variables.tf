@@ -67,7 +67,7 @@ variable "config" {
       callback_urls      = set(string)
       logout_urls        = optional(set(string))
       auth_flows         = optional(set(string))
-      identity_providers = optional(set(string), ["cognito"])
+      identity_providers = optional(set(string), ["COGNITO"])
     }))
 
     custom_messages = optional(object({
