@@ -9,9 +9,9 @@ resource "aws_cognito_user_pool_client" "this" {
   # generate_secret              = true
   supported_identity_providers = each.value.identity_providers
 
-  allowed_oauth_flows  = ["code"]            // (code, implicit, client_credentials).
-  allowed_oauth_scopes = ["openid", "email"] //- (Optional) List of allowed OAuth scopes (phone, email, openid, profile, and aws.cognito.signin.user.admin).
-  # allowed_oauth_flows_user_pool_client - (Optional) Whether the client is allowed to follow the OAuth protocol when interacting with Cognito user pools.
+  allowed_oauth_flows                  = ["code"]                     // (code, implicit, client_credentials).
+  allowed_oauth_scopes                 = ["openid", "email"]          //- (Optional) List of allowed OAuth scopes (phone, email, openid, profile, and aws.cognito.signin.user.admin).
+  allowed_oauth_flows_user_pool_client = each.value.allow_oauth_flows // (Optional) Whether the client is allowed to follow the OAuth protocol when interacting with Cognito user pools.
   # default_redirect_uri - (Optional) The default redirect URI. Must be in the list of callback URLs.
   explicit_auth_flows = each.value.auth_flows
 
