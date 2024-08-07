@@ -68,7 +68,7 @@ variable "config" {
       logout_urls        = optional(set(string))
       auth_flows         = optional(set(string))
       identity_providers = optional(set(string), ["COGNITO"])
-      allow_oauth_flows  = optional(bool, false)
+      allow_oauth_scopes = optional(set(string), ["openid", "email"])
     }))
 
     custom_messages = optional(object({
