@@ -11,7 +11,7 @@ resource "aws_cognito_user_pool_client" "this" {
 
   allowed_oauth_flows                  = ["code"]                                                         // (code, implicit, client_credentials).
   allowed_oauth_scopes                 = each.value.allow_oauth_scopes                                    //- (Optional) List of allowed OAuth scopes (phone, email, openid, profile, and aws.cognito.signin.user.admin).
-  allowed_oauth_flows_user_pool_client = contains(each.value.allow_oauth_scopes, "openid") ? true : false // (Optional) Whether the client is allowed to follow the OAuth protocol when interacting with Cognito user pools.
+  allowed_oauth_flows_user_pool_client = contains(each.value.allow_oauth_scopes, "openid") // (Optional) Whether the client is allowed to follow the OAuth protocol when interacting with Cognito user pools.
   # default_redirect_uri - (Optional) The default redirect URI. Must be in the list of callback URLs.
   explicit_auth_flows = each.value.auth_flows
 
