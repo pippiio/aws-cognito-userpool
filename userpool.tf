@@ -119,10 +119,19 @@ resource "aws_cognito_user_pool" "this" {
   }
 
   dynamic "lambda_config" {
-    for_each = local.enable_custom_messages
+    for_each = length(local.enable_custom_messages) > 0 || local.config.pre_token_generation != null ? ["true"] : []
 
     content {
-      custom_message = aws_lambda_function.lambda[lambda_config.key].arn
+      custom_message = length(local.enable_custom_messages) > 0 ? aws_lambda_function.lambda["true"].arn : null
+
+      dynamic "pre_token_generation_config" {
+        for_each = local.config.pre_token_generation != null ? [local.config.pre_token_generation] : []
+
+        content {
+          lambda_arn     = pre_token_generation_config.value.lambda_arn
+          lambda_version = pre_token_generation_config.value.lambda_version
+        }
+      }
     }
   }
 
