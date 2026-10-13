@@ -71,6 +71,19 @@ variable "config" {
       allow_oauth_scopes = optional(set(string), ["openid", "email"])
     }))
 
+    # A Lambda function Cognito invokes before it issues tokens, e.g. to set
+    # cognito:groups. V1_0 events change the ID token and the groups in the
+    # access token; V2_0 and V3_0 need the Essentials or Plus feature plan.
+    pre_token_generation = optional(object({
+      lambda_arn = string
+      # The format of the events Cognito sends the function, not a version of
+      # the function or its runtime. The function answers in that format, so
+      # set it with the function's code rather than inferring it from the
+      # pool's feature plan: a pool upgraded to Essentials would otherwise
+      # switch to V2_0 events that a V1_0 function's answers don't apply to.
+      lambda_version = optional(string, "V1_0")
+    }))
+
     custom_messages = optional(object({
       signup = optional(object({
         subject = optional(string)
